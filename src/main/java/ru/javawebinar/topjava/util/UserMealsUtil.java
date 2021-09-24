@@ -23,10 +23,10 @@ public class UserMealsUtil {
                 new UserMeal(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410)
         );
 
-//        List<UserMealWithExcess> mealsTo = filteredByCycles(meals, LocalTime.of(0, 0), LocalTime.of(23, 0), 2000);
-//        mealsTo.forEach(System.out::println);
+        List<UserMealWithExcess> mealsTo = filteredByStreams(meals, LocalTime.of(0, 0), LocalTime.of(23, 0), 2000);
+        mealsTo.forEach(System.out::println);
 
-        System.out.println(filteredByStreams(meals, LocalTime.of(0, 0), LocalTime.of(23, 0), 2000));
+//        System.out.println(filteredByStreams(meals, LocalTime.of(0, 0), LocalTime.of(23, 0), 2000));
     }
 
     public static List<UserMealWithExcess> filteredByCycles(List<UserMeal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
@@ -66,15 +66,9 @@ public class UserMealsUtil {
 
     public static List<UserMealWithExcess> filteredByStreams(List<UserMeal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
         // TODO Implement by streams
-//        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-//        Map<String, Integer> dayVsCalories = meals.stream().collect(Collectors.groupingBy(x -> x.getDateTime().format(dateTimeFormatter), Collectors.summingInt(UserMeal::getCalories)));
-//        Map<String, List<UserMeal>> dayVsMeals = meals.stream().collect(Collectors.groupingBy(x -> x.getDateTime().format(dateTimeFormatter)));
-//        List<UserMealWithExcess> userMealsWithExcess = dayVsMeals.entrySet().stream().map(x -> dayVsCalories.get(x.getKey()) > caloriesPerDay ? x.getValue().stream().map(y -> new UserMealWithExcess(y, true)) : x.getValue().stream().map(z -> new UserMealWithExcess(z, false ))).flatMap(x -> {
-//
-//        }).collect(Collectors.toList());
-//        System.out.println(dayVsMeals);
-//        System.out.println(dayVsCalories);
-//        System.out.println(meals);
-        return null;
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        Map<String, Integer> dayVsCalories = meals.stream().collect(Collectors.groupingBy(x -> x.getDateTime().format(dateTimeFormatter), Collectors.summingInt(UserMeal::getCalories)));
+        Map<String, List<UserMeal>> dayVsMeals = meals.stream().collect(Collectors.groupingBy(x -> x.getDateTime().format(dateTimeFormatter)));
+        return dayVsMeals.entrySet().stream().flatMap(x -> dayVsCalories.get(x.getKey()) > caloriesPerDay ? x.getValue().stream().map(y -> new UserMealWithExcess(y, true)) : x.getValue().stream().map(y -> new UserMealWithExcess(y, false))).collect(Collectors.toList());
     }
 }
