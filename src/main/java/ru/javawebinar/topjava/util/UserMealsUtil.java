@@ -8,6 +8,11 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
 import java.util.*;
+import java.util.function.BiConsumer;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 public class UserMealsUtil {
@@ -57,4 +62,93 @@ public class UserMealsUtil {
                 .collect(new MealsWithExcessCollector(startTime, endTime, caloriesPerDay));
     }
 
+    private static class MealsWithExcessCollector implements Collector<UserMeal, HashMap<LocalDate, Pair<List<UserMeal>, Integer>>, List<UserMealWithExcess>> {
+        private Integer caloriesPerDay;
+        private LocalTime startTime, endTime;
+
+        public MealsWithExcessCollector(LocalTime startTime, LocalTime endTime, Integer caloriesPerDay) {
+            this.caloriesPerDay = caloriesPerDay;
+            this.startTime = startTime;
+            this.endTime = endTime;
+        }
+
+        @Override
+        public Supplier<HashMap<LocalDate, Pair<List<UserMeal>, Integer>>> supplier() {
+            return HashMap::new;
+        }
+
+        @Override
+        public BiConsumer<HashMap<LocalDate, Pair<List<UserMeal>, Integer>>, UserMeal> accumulator() {
+            return (map, userMeal) -> map.merge(userMeal.getDateTime().toLocalDate(), TimeUtil.isBetweenHalfOpen(userMeal.getDateTime().toLocalTime(), startTime, endTime)
+                            ? new Pair<>(Collections.singletonList(userMeal), userMeal.getCalories())
+                            : new Pair<>(new ArrayList<>(), userMeal.getCalories()),
+                    (prev, one) -> {
+                        List<UserMeal> newList = new ArrayList<>(prev.getFirst());
+                        if (!one.getFirst().isEmpty()) {
+                            newList.add(one.getFirst().get(0));
+                        }
+                        return new Pair<>(newList, prev.getSecond() + one.getSecond());
+                    });
+        }
+
+        @Override
+        public BinaryOperator<HashMap<LocalDate, Pair<List<UserMeal>, Integer>>> combiner() {
+            return (map1, map2) -> {
+                HashMap<LocalDate, Pair<List<UserMeal>, Integer>> map3 = new HashMap<>(map1);
+                map2.forEach((key, value) -> map3.merge(key, value, (prev, one) -> {
+                    List<UserMeal> newList = new ArrayList<>(prev.getFirst());
+                    newList.addAll(one.getFirst());
+                    return new Pair<>(newList, prev.getSecond() + one.getSecond());
+                }));
+                return map3;
+            };
+        }
+
+
+        @Override
+        public Function<HashMap<LocalDate, Pair<List<UserMeal>, Integer>>, List<UserMealWithExcess>> finisher() {
+            return map -> map.values().stream()
+                    .flatMap(pair -> pair.getFirst().stream()
+                            .map(userMeal -> UserMealsUtil.convertUserMealToUserMealWithExcess(userMeal, pair.getSecond() > caloriesPerDay)))
+                    .collect(Collectors.toList());
+        }
+
+        @Override
+        public Set<Characteristics> characteristics() {
+            return EnumSet.of(Characteristics.CONCURRENT);
+        }
+    }
+
+    private static class Pair<U, V> {
+
+        /**
+         * The first element of this <code>Pair</code>
+         */
+        private U first;
+
+        /**
+         * The second element of this <code>Pair</code>
+         */
+        private V second;
+
+        /**
+         * Constructs a new <code>Pair</code> with the given values.
+         *
+         * @param first  the first element
+         * @param second the second element
+         */
+        public Pair(U first, V second) {
+
+            this.first = first;
+            this.second = second;
+        }
+
+        public U getFirst() {
+            return first;
+        }
+
+        public V getSecond() {
+            return second;
+        }
+    }
 }
