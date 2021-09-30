@@ -47,11 +47,11 @@ public class MealsWithExcessCollector implements Collector<UserMeal, HashMap<Loc
     public BinaryOperator<HashMap<LocalDate, Pair<List<UserMeal>, Integer>>> combiner() {
         return (map1, map2) -> {
             HashMap<LocalDate, Pair<List<UserMeal>, Integer>> map3 = new HashMap<>(map1);
-            map2.forEach((key, value) -> map3.merge(key, value, (v1, v2) -> {
+            map2.forEach((key, value) -> map3.merge(key, value, (prev, one) -> {
                 List<UserMeal> newList = new ArrayList<>();
-                newList.addAll(v1.getFirst());
-                newList.addAll(v2.getFirst());
-                return new Pair<>(newList, v1.getSecond() + v2.getSecond());
+                newList.addAll(prev.getFirst());
+                newList.addAll(one.getFirst());
+                return new Pair<>(newList, prev.getSecond() + one.getSecond());
             }));
             return map3;
         };
@@ -61,10 +61,10 @@ public class MealsWithExcessCollector implements Collector<UserMeal, HashMap<Loc
     @Override
     public Function<HashMap<LocalDate, Pair<List<UserMeal>, Integer>>, List<UserMealWithExcess>> finisher() {
         return map -> map.values().stream()
-                .flatMap(x -> x.getFirst().stream()
-                        .filter(z -> TimeUtil.isBetweenHalfOpen(z.getDateTime().toLocalTime(), startTime, endTime))
-                        .map(y -> new Pair<>(y, x.getSecond())))
-                .map(x -> UserMealsUtil.convertUserMealToUserMealWithExcess(x.getFirst(), x.getSecond() > caloriesPerDay))
+                .flatMap(pair -> pair.getFirst().stream()
+                        .filter(userMeal -> TimeUtil.isBetweenHalfOpen(userMeal.getDateTime().toLocalTime(), startTime, endTime))
+                        .map(userMeal -> new Pair<>(userMeal, pair.getSecond())))
+                .map(pair -> UserMealsUtil.convertUserMealToUserMealWithExcess(pair.getFirst(), pair.getSecond() > caloriesPerDay))
                 .collect(Collectors.toList());
     }
 
