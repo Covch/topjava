@@ -17,11 +17,7 @@ public class MealsWithExcessCollector implements Collector<UserMeal, HashMap<Loc
     private Integer caloriesPerDay;
     private LocalTime startTime, endTime;
 
-    public static MealsWithExcessCollector toMealsWithExcessList(LocalTime startTime, LocalTime endTime, Integer caloriesPerDay) {
-        return new MealsWithExcessCollector(startTime, endTime, caloriesPerDay);
-    }
-
-    private MealsWithExcessCollector(LocalTime startTime, LocalTime endTime, Integer caloriesPerDay) {
+    public MealsWithExcessCollector(LocalTime startTime, LocalTime endTime, Integer caloriesPerDay) {
         this.caloriesPerDay = caloriesPerDay;
         this.startTime = startTime;
         this.endTime = endTime;

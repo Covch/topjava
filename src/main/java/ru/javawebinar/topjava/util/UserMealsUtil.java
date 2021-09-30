@@ -54,7 +54,7 @@ public class UserMealsUtil {
 
     public static List<UserMealWithExcess> filteredByStream(List<UserMeal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
         return meals.stream()
-                .collect(MealsWithExcessCollector.toMealsWithExcessList(startTime, endTime, caloriesPerDay));
+                .collect(new MealsWithExcessCollector(startTime, endTime, caloriesPerDay));
     }
 
 }
