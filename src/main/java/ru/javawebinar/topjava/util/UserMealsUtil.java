@@ -2,20 +2,12 @@ package ru.javawebinar.topjava.util;
 
 import ru.javawebinar.topjava.model.UserMeal;
 import ru.javawebinar.topjava.model.UserMealWithExcess;
-import ru.javawebinar.topjava.model.UserMealWithExcessTest;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.function.BiConsumer;
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 public class UserMealsUtil {
@@ -29,16 +21,8 @@ public class UserMealsUtil {
                 new UserMeal(LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0), "Обед", 500),
                 new UserMeal(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410)
         );
-//        long start = System.currentTimeMillis();
-//        for (int i = 0; i < 100000; i++) {
-//            List<UserMealWithExcess> mealsTo = filteredByStream(meals, LocalTime.of(12, 0), LocalTime.of(23, 0), 2000);
-//        }
-//        long finish = System.currentTimeMillis();
-//        long elapsed = finish - start;
-//        System.out.println("Прошло времени: " + elapsed + " мс.");
-//        List<UserMealWithExcess> mealsTo = filteredByStream(meals, LocalTime.of(12, 0), LocalTime.of(23, 0), 2000);
-//        mealsTo.forEach(System.out::println);
-        List<UserMealWithExcessTest> mealsTo = filteredByCycle(meals, LocalTime.of(12, 0), LocalTime.of(23, 0), 2000);
+
+        List<UserMealWithExcess> mealsTo = filteredByCycles(meals, LocalTime.of(12, 0), LocalTime.of(23, 0), 2000);
         mealsTo.forEach(System.out::println);
     }
 
@@ -71,13 +55,4 @@ public class UserMealsUtil {
                 .collect(MealsWithExcessCollector.toMealsWithExcessList(startTime, endTime, caloriesPerDay));
     }
 
-    public static List<UserMealWithExcessTest> filteredByCycle(List<UserMeal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
-        List<UserMealWithExcessTest> result = new ArrayList<>();
-        for (UserMeal userMeal: meals
-             ) {
-            UserMealWithExcessTest userMealWithExcessTest = new UserMealWithExcessTest(userMeal, caloriesPerDay);
-            if (TimeUtil.isBetweenHalfOpen(userMeal.getDateTime().toLocalTime(), startTime, endTime)) result.add(userMealWithExcessTest);
-        }
-        return result;
-    }
 }
