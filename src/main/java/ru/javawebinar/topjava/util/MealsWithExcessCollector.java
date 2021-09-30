@@ -64,7 +64,7 @@ public class MealsWithExcessCollector implements Collector<UserMeal, HashMap<Loc
                 .flatMap(x -> x.getFirst().stream()
                         .filter(z -> TimeUtil.isBetweenHalfOpen(z.getDateTime().toLocalTime(), startTime, endTime))
                         .map(y -> new Pair<>(y, x.getSecond())))
-                .map(x -> new UserMealWithExcess(x.getFirst(), x.getSecond() > caloriesPerDay))
+                .map(x -> UserMealsUtil.convertUserMealToUserMealWithExcess(x.getFirst(), x.getSecond() > caloriesPerDay))
                 .collect(Collectors.toList());
     }
 
