@@ -83,11 +83,10 @@ public class UserMealsUtil {
                             ? new Pair<>(Collections.singletonList(userMeal), userMeal.getCalories())
                             : new Pair<>(new ArrayList<>(), userMeal.getCalories()),
                     (prev, one) -> {
-                        List<UserMeal> newList = new ArrayList<>(prev.getFirst());
                         if (!one.getFirst().isEmpty()) {
-                            newList.add(one.getFirst().get(0));
+                            prev.getFirst().add(one.getFirst().get(0));
                         }
-                        return new Pair<>(newList, prev.getSecond() + one.getSecond());
+                        return new Pair<>(prev.getFirst(), prev.getSecond() + one.getSecond());
                     });
         }
 
@@ -96,9 +95,8 @@ public class UserMealsUtil {
             return (map1, map2) -> {
                 HashMap<LocalDate, Pair<List<UserMeal>, Integer>> map3 = new HashMap<>(map1);
                 map2.forEach((key, value) -> map3.merge(key, value, (prev, one) -> {
-                    List<UserMeal> newList = new ArrayList<>(prev.getFirst());
-                    newList.addAll(one.getFirst());
-                    return new Pair<>(newList, prev.getSecond() + one.getSecond());
+                    prev.getFirst().addAll(one.getFirst());
+                    return new Pair<>(prev.getFirst(), prev.getSecond() + one.getSecond());
                 }));
                 return map3;
             };
