@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="https://topjava.com/customFunctions" prefix="f" %>
 <jsp:useBean id="mealToList" scope="request" type="java.util.List"/>
 <html lang="ru">
 <head>
@@ -72,7 +73,7 @@
 
     <c:forEach var="mealTo" items="${mealToList}">
         <tr style="${mealTo.excess ? 'background-color: #ff648b' : 'background-color: #F8E391'}">
-            <td>${mealTo.dateTime}</td>
+            <td>${f:formatLocalDateTime(mealTo.dateTime, 'yyyy-MM-dd HH:mm')}</td>
             <td>${mealTo.description}</td>
             <td>${mealTo.calories}</td>
             <td>Update</td>
