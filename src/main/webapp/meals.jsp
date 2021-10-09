@@ -17,6 +17,7 @@
         <th></th>
         <th></th>
     </tr>
+    <jsp:useBean id="mealToList" scope="request" type="java.util.List"/>
     <c:forEach var="mealTo" items="${mealToList}">
         <tr>
             <td>${mealTo.dateTime}</td>
