@@ -61,7 +61,6 @@
 <h3><a href="index.html">Home</a></h3>
 <hr>
 <h2>Meals</h2>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/css/table.css"/>
 <table>
     <tr>
         <th>Date</th>
@@ -76,10 +75,13 @@
             <td>${f:formatLocalDateTime(mealTo.dateTime, 'yyyy-MM-dd HH:mm')}</td>
             <td>${mealTo.description}</td>
             <td>${mealTo.calories}</td>
-            <td>Update</td>
-            <td>Delete</td>
+            <td><a href="index.html">Update</a></td>
+            <td><a href="index.html">Delete</a></td>
         </tr>
     </c:forEach>
+    <tr style="background-color: #F8E391">
+        <td colspan="5"><a href="index.html">Add new meal...</a></td>
+    </tr>
 </table>
 </body>
 </html>
