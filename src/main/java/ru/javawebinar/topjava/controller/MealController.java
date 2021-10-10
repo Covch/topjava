@@ -30,28 +30,29 @@ public class MealController extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         log.debug("GET: " + req.getQueryString());
 
-        String forward;
         String action = req.getParameter("action").toLowerCase(Locale.ROOT);
-        long mealId;
-        Meal meal;
         switch (action) {
             case "delete":
-                forward = LIST_MEAL;
-                mealId = Long.parseLong(req.getParameter("mealId"));
+                long mealId = Long.parseLong(req.getParameter("mealId"));
                 mealDao.deleteMeal(mealId);
-                break;
+                resp.sendRedirect(req.getContextPath() + LIST_MEAL);
+                return;
             case "edit":
-                forward = INSERT_OR_EDIT;
                 mealId = Long.parseLong(req.getParameter("mealId"));
-                meal = mealDao.getMealById(mealId);
+                Meal meal = mealDao.getMealById(mealId);
+                req.setAttribute("action", action);
                 req.setAttribute("meal", meal);
-                break;
-            default:
-                forward = INSERT_OR_EDIT;
+                req.getRequestDispatcher(INSERT_OR_EDIT).forward(req, resp);
+                return;
+            case "insert":
                 meal = new Meal(LocalDateTime.now(), "", 0);
+                req.setAttribute("action", action);
                 req.setAttribute("meal", meal);
+                req.getRequestDispatcher(INSERT_OR_EDIT).forward(req, resp);
+                return;
+            default:
+                resp.sendRedirect(req.getContextPath() + LIST_MEAL);
         }
-        req.getRequestDispatcher(forward).forward(req, resp);
     }
 
     @Override

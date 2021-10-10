@@ -1,12 +1,15 @@
+<jsp:useBean id="action" scope="request" type="java.lang.String"/>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<c:set var = "title" scope = "session" value = "${'insert'.equals(action) ? 'Add' : 'edit'.equals(action) ? 'Edit' : ''}"/>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-    <title>Add or edit meal</title>
+    <title>${title} meal</title>
 </head>
 <body>
-<h3>Add or edit meal</h3>
+<h3>${title} meal</h3>
 <jsp:useBean id="meal" scope="request" type="ru.javawebinar.topjava.model.Meal"/>
 <form method="POST" action='meal' name="frmAddOrEditMeal">
     <input type="hidden" readonly="readonly" name="mealId"
