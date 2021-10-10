@@ -27,10 +27,13 @@ public class InMemoryMealDao implements MealDao {
 
     @Override
     public Meal add(Meal meal) {
-        long mealId = idCounter.incrementAndGet();
-        meal.setId(mealId);
-        storage.put(mealId, meal);
-        return meal;
+        if (meal.getId() == null) {
+            long mealId = idCounter.incrementAndGet();
+            meal.setId(mealId);
+            storage.put(mealId, meal);
+            return meal;
+        }
+        return null;
     }
 
     @Override
