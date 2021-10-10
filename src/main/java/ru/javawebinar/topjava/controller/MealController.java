@@ -35,12 +35,12 @@ public class MealController extends HttpServlet {
         switch (action) {
             case "delete":
                 long mealId = Long.parseLong(req.getParameter("mealId"));
-                mealDao.deleteMeal(mealId);
+                mealDao.delete(mealId);
                 resp.sendRedirect(req.getContextPath() + LIST_MEAL);
                 return;
             case "edit":
                 mealId = Long.parseLong(req.getParameter("mealId"));
-                Meal meal = mealDao.getMealById(mealId);
+                Meal meal = mealDao.getById(mealId);
                 req.setAttribute("action", action);
                 req.setAttribute("meal", meal);
                 req.getRequestDispatcher(INSERT_OR_EDIT).forward(req, resp);
@@ -64,10 +64,10 @@ public class MealController extends HttpServlet {
                 req.getParameter("description"),
                 Integer.parseInt(req.getParameter("calories")));
         if (req.getParameter("mealId").isEmpty()) {
-            mealDao.addMeal(meal);
+            mealDao.add(meal);
         } else {
             meal.setId(Long.parseLong(req.getParameter("mealId")));
-            mealDao.updateMeal(meal);
+            mealDao.update(meal);
         }
 
         log.debug("POST: " + meal);

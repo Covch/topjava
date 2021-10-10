@@ -30,31 +30,33 @@ public class MealDaoImplByMemory implements MealDao {
     }
 
     @Override
-    public void addMeal(Meal meal) {
+    public Meal add(Meal meal) {
         long mealId = idCounter.incrementAndGet();
         meal.setId(mealId);
         mealStorage.putIfAbsent(mealId, meal);
+        return meal;
     }
 
     @Override
-    public void deleteMeal(long id) {
+    public void delete(long id) {
         mealStorage.remove(id);
     }
 
     @Override
-    public void updateMeal(Meal meal) {
+    public Meal update(Meal meal) {
         Meal tempMeal = new Meal(meal.getDateTime(), meal.getDescription(), meal.getCalories());
         tempMeal.setId(meal.getId());
         mealStorage.replace(tempMeal.getId(), tempMeal);
+        return tempMeal;
     }
 
     @Override
-    public List<Meal> getAllMeals() {
+    public List<Meal> getAll() {
         return new ArrayList<>(mealStorage.values());
     }
 
     @Override
-    public Meal getMealById(long id) {
+    public Meal getById(long id) {
         return mealStorage.get(id);
     }
 }
