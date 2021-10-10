@@ -63,7 +63,7 @@ public class MealController extends HttpServlet {
         Meal meal = new Meal(LocalDateTime.parse(req.getParameter("datetime-local")),
                 req.getParameter("description"),
                 Integer.parseInt(req.getParameter("calories")));
-        if ("-1".equals(req.getParameter("mealId"))) {
+        if (req.getParameter("mealId").isEmpty()) {
             mealDao.addMeal(meal);
         } else {
             meal.setId(Long.parseLong(req.getParameter("mealId")));

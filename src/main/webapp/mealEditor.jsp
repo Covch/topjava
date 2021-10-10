@@ -1,10 +1,9 @@
-<jsp:useBean id="action" scope="request" type="java.lang.String"/>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<c:set var = "title" scope = "session" value = "${'insert'.equals(action) ? 'Add' : 'edit'.equals(action) ? 'Edit' : ''}"/>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<jsp:useBean id="action" scope="request" type="java.lang.String"/>
+<c:set var="title" scope="session" value="${'insert'.equals(action) ? 'Add' : 'edit'.equals(action) ? 'Edit' : ''}"/>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+<html lang="ru">
 <head>
     <title>${title} meal</title>
 </head>
@@ -40,6 +39,7 @@
             type="submit" value="Submit"/>
 </form>
 <button onclick="location.href='meals'" type="button">
-    Go Back</button>
+    Go Back
+</button>
 </body>
 </html>
