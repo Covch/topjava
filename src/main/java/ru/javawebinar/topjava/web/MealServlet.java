@@ -26,7 +26,7 @@ public class MealServlet extends HttpServlet {
     private MealDao mealDao;
 
     @Override
-    public void init() throws ServletException {
+    public void init() {
         mealDao = new MealDaoImplByMemory();
     }
 
@@ -38,27 +38,33 @@ public class MealServlet extends HttpServlet {
             String action = req.getParameter("action").toLowerCase(Locale.ROOT);
             switch (action) {
                 case "delete":
-                    long mealId = Long.parseLong(req.getParameter("mealId"));
+                    long mealId = getMealId(req);
                     mealDao.delete(mealId);
                     resp.sendRedirect(req.getContextPath() + LIST_MEAL);
                     return;
                 case "edit":
-                    mealId = Long.parseLong(req.getParameter("mealId"));
+                    mealId = getMealId(req);
                     Meal meal = mealDao.getById(mealId);
-                    req.setAttribute("action", action);
-                    req.setAttribute("meal", meal);
-                    req.getRequestDispatcher(INSERT_OR_EDIT).forward(req, resp);
+                    setAttrAndForward(req, resp, action, meal);
                     return;
                 case "insert":
                     meal = new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 0);
-                    req.setAttribute("action", action);
-                    req.setAttribute("meal", meal);
-                    req.getRequestDispatcher(INSERT_OR_EDIT).forward(req, resp);
+                    setAttrAndForward(req, resp, action, meal);
                     return;
             }
         }
         req.setAttribute("mealToList", MealsUtil.filteredByStreams(mealDao.getAll(), LocalTime.MIN, LocalTime.MAX, CALORIES_PER_DAY));
         req.getRequestDispatcher("/meals.jsp").forward(req, resp);
+    }
+
+    private long getMealId(HttpServletRequest req) {
+        return Long.parseLong(req.getParameter("mealId"));
+    }
+
+    private void setAttrAndForward(HttpServletRequest req, HttpServletResponse resp, String action, Meal meal) throws ServletException, IOException {
+        req.setAttribute("action", action);
+        req.setAttribute("meal", meal);
+        req.getRequestDispatcher(INSERT_OR_EDIT).forward(req, resp);
     }
 
     @Override
@@ -71,7 +77,7 @@ public class MealServlet extends HttpServlet {
         if (req.getParameter("mealId").isEmpty()) {
             mealDao.add(meal);
         } else {
-            meal.setId(Long.parseLong(req.getParameter("mealId")));
+            meal.setId(getMealId(req));
             mealDao.update(meal);
         }
 
