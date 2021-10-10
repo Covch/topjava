@@ -39,5 +39,7 @@
     <input
             type="submit" value="Submit"/>
 </form>
+<button onclick="location.href='meals'" type="button">
+    Go Back</button>
 </body>
 </html>
