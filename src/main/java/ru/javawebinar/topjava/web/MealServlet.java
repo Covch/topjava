@@ -32,8 +32,7 @@ public class MealServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        log.debug("GET: " + req.getQueryString());
-
+        log.debug("GET: {}", req.getQueryString());
         if (req.getParameter("action") != null) {
             String action = req.getParameter("action").toLowerCase(Locale.ROOT);
             switch (action) {
@@ -41,6 +40,7 @@ public class MealServlet extends HttpServlet {
                     long mealId = getMealId(req);
                     mealDao.delete(mealId);
                     resp.sendRedirect(req.getContextPath() + LIST_MEAL);
+                    log.debug("GET: {} {}", action, mealId);
                     return;
                 case "edit":
                     mealId = getMealId(req);
@@ -64,24 +64,24 @@ public class MealServlet extends HttpServlet {
     private void setAttrAndForward(HttpServletRequest req, HttpServletResponse resp, String action, Meal meal) throws ServletException, IOException {
         req.setAttribute("action", action);
         req.setAttribute("meal", meal);
+        log.debug("GET: {} {}", action, meal);
         req.getRequestDispatcher(INSERT_OR_EDIT).forward(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         req.setCharacterEncoding("UTF-8");
-
         Meal meal = new Meal(LocalDateTime.parse(req.getParameter("datetime-local")),
                 req.getParameter("description"),
                 Integer.parseInt(req.getParameter("calories")));
         if (req.getParameter("mealId").isEmpty()) {
+            log.debug("POST: insert {}", meal);
             mealDao.add(meal);
         } else {
             meal.setId(getMealId(req));
+            log.debug("POST: edit {}", meal);
             mealDao.update(meal);
         }
-
-        log.debug("POST: " + meal);
         resp.sendRedirect(req.getContextPath() + LIST_MEAL);
     }
 }
