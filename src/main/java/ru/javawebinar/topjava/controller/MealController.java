@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Locale;
 
 import static org.slf4j.LoggerFactory.getLogger;
@@ -45,7 +46,7 @@ public class MealController extends HttpServlet {
                 req.getRequestDispatcher(INSERT_OR_EDIT).forward(req, resp);
                 return;
             case "insert":
-                meal = new Meal(LocalDateTime.now(), "", 0);
+                meal = new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 0);
                 req.setAttribute("action", action);
                 req.setAttribute("meal", meal);
                 req.getRequestDispatcher(INSERT_OR_EDIT).forward(req, resp);
