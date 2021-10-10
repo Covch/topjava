@@ -8,7 +8,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class MealDaoImpl implements MealDao {
+public class MealDaoImplByMemory implements MealDao {
     private static Map<Long, Meal> mealStorage = new ConcurrentHashMap<>();
     private static final AtomicLong idCounter = new AtomicLong(-1);
 
