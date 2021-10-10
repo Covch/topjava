@@ -10,7 +10,7 @@
 <body>
 <h3>${title} meal</h3>
 <jsp:useBean id="meal" scope="request" type="ru.javawebinar.topjava.model.Meal"/>
-<form method="POST" action='meal' name="frmAddOrEditMeal">
+<form method="POST" action='meals' name="frmAddOrEditMeal">
     <input type="hidden" readonly="readonly" name="mealId"
            value="<c:out value="${meal.id}" />"/>
     <br/>

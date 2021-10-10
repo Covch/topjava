@@ -76,12 +76,12 @@
             <td>${f:formatLocalDateTime(mealTo.dateTime, 'yyyy-MM-dd HH:mm')}</td>
             <td>${mealTo.description}</td>
             <td>${mealTo.calories}</td>
-            <td><a href="meal?action=edit&mealId=<c:out value="${mealTo.id}"/>">Update</a></td>
-            <td><a href="meal?action=delete&mealId=<c:out value="${mealTo.id}"/>">Delete</a></td>
+            <td><a href="meals?action=edit&mealId=<c:out value="${mealTo.id}"/>">Update</a></td>
+            <td><a href="meals?action=delete&mealId=<c:out value="${mealTo.id}"/>">Delete</a></td>
         </tr>
     </c:forEach>
     <tr style="background-color: #F8E391">
-        <td colspan="5"><a href="meal?action=insert">Add new meal...</a></td>
+        <td colspan="5"><a href="meals?action=insert">Add new meal...</a></td>
     </tr>
 </table>
 </body>
