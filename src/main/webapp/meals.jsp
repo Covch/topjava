@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib uri="https://topjava.com/customFunctions" prefix="f" %>
 <jsp:useBean id="mealToList" scope="request" type="java.util.List"/>
@@ -75,12 +75,12 @@
             <td>${f:formatLocalDateTime(mealTo.dateTime, 'yyyy-MM-dd HH:mm')}</td>
             <td>${mealTo.description}</td>
             <td>${mealTo.calories}</td>
-            <td><a href="index.html">Update</a></td>
-            <td><a href="index.html">Delete</a></td>
+            <td><a href="meal?action=edit&mealId=<c:out value="${mealTo.id}"/>">Update</a></td>
+            <td><a href="meal?action=delete&mealId=<c:out value="${mealTo.id}"/>">Delete</a></td>
         </tr>
     </c:forEach>
     <tr style="background-color: #F8E391">
-        <td colspan="5"><a href="index.html">Add new meal...</a></td>
+        <td colspan="5"><a href="meal?action=insert">Add new meal...</a></td>
     </tr>
 </table>
 </body>
