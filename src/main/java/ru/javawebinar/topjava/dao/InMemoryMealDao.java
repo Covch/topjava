@@ -8,11 +8,11 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class MealDaoImplByMemory implements MealDao {
-    private static Map<Long, Meal> mealStorage = new ConcurrentHashMap<>();
-    private static final AtomicLong idCounter = new AtomicLong(-1);
+public class InMemoryMealDao implements MealDao {
+    private Map<Long, Meal> storage = new ConcurrentHashMap<>();
+    private final AtomicLong idCounter = new AtomicLong(-1);
 
-    static {
+    {
         List<Meal> meals = Arrays.asList(
                 new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500),
                 new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "Обед", 1000),
@@ -22,41 +22,36 @@ public class MealDaoImplByMemory implements MealDao {
                 new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0), "Обед", 500),
                 new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410)
         );
-        meals.forEach(meal -> {
-            long mealId = idCounter.incrementAndGet();
-            meal.setId(mealId);
-            mealStorage.put(mealId, meal);
-        });
+        meals.forEach(this::add);
     }
 
     @Override
     public Meal add(Meal meal) {
         long mealId = idCounter.incrementAndGet();
         meal.setId(mealId);
-        mealStorage.putIfAbsent(mealId, meal);
+        storage.put(mealId, meal);
         return meal;
     }
 
     @Override
     public void delete(long id) {
-        mealStorage.remove(id);
+        storage.remove(id);
     }
 
     @Override
     public Meal update(Meal meal) {
-        Meal tempMeal = new Meal(meal.getDateTime(), meal.getDescription(), meal.getCalories());
-        tempMeal.setId(meal.getId());
-        mealStorage.replace(tempMeal.getId(), tempMeal);
+        Meal tempMeal = new Meal(meal.getId(), meal.getDateTime(), meal.getDescription(), meal.getCalories());
+        storage.replace(tempMeal.getId(), tempMeal);
         return tempMeal;
     }
 
     @Override
     public List<Meal> getAll() {
-        return new ArrayList<>(mealStorage.values());
+        return new ArrayList<>(storage.values());
     }
 
     @Override
     public Meal getById(long id) {
-        return mealStorage.get(id);
+        return storage.get(id);
     }
 }
