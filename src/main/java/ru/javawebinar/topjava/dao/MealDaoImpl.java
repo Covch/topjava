@@ -6,10 +6,12 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 public class MealDaoImpl implements MealDao {
     private static Map<Long, Meal> mealStorage = new ConcurrentHashMap<>();
+    private static final AtomicLong idCounter = new AtomicLong(-1);
 
     static {
         List<Meal> meals = Arrays.asList(
@@ -21,12 +23,18 @@ public class MealDaoImpl implements MealDao {
                 new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0), "Обед", 500),
                 new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410)
         );
-        meals.forEach(meal -> mealStorage.put(meal.getId(), meal));
+        meals.forEach(meal -> {
+            long mealId = idCounter.incrementAndGet();
+            meal.setId(mealId);
+            mealStorage.put(mealId, meal);
+        });
     }
 
     @Override
     public void addMeal(Meal meal) {
-        mealStorage.putIfAbsent(meal.getId(), meal);
+        long mealId = idCounter.incrementAndGet();
+        meal.setId(mealId);
+        mealStorage.putIfAbsent(mealId, meal);
     }
 
     @Override
@@ -36,7 +44,9 @@ public class MealDaoImpl implements MealDao {
 
     @Override
     public void updateMeal(Meal meal) {
-        mealStorage.replace(meal.getId(), meal);
+        Meal tempMeal = new Meal(meal.getDateTime(), meal.getDescription(), meal.getCalories());
+        tempMeal.setId(meal.getId());
+        mealStorage.replace(tempMeal.getId(), tempMeal);
     }
 
     @Override
