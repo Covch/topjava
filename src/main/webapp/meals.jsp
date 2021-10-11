@@ -5,8 +5,7 @@
 <html lang="ru">
 <head>
     <title>Meals</title>
-    <link rel="stylesheet" type="text/css" href="css/table.css" media="screen" />
-
+    <link rel="stylesheet" type="text/css" href="css/default.css" media="screen" />
 </head>
 <body>
 <h3><a href="index.html">Home</a></h3>
@@ -22,7 +21,7 @@
     </tr>
     <jsp:useBean id="mealToList" scope="request" type="java.util.List"/>
     <c:forEach var="mealTo" items="${mealToList}">
-        <tr style="background-color: ${mealTo.excess ? '#ff648b' : '#F8E391'}">
+        <tr class="${mealTo.excess ? 'excess' : 'noExcess'}">
             <td>${f:formatLocalDateTime(mealTo.dateTime)}</td>
             <td>${mealTo.description}</td>
             <td>${mealTo.calories}</td>
@@ -30,7 +29,7 @@
             <td><a href="meals?action=delete&mealId=${mealTo.id}">Delete</a></td>
         </tr>
     </c:forEach>
-    <tr style="background-color: #F8E391">
+    <tr class="addNew">
         <td colspan="5"><a href="meals?action=insert">Add new meal...</a></td>
     </tr>
 </table>
