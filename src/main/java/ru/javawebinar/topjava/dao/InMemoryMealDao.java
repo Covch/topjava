@@ -9,8 +9,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class InMemoryMealDao implements MealDao {
-    private Map<Long, Meal> storage = new ConcurrentHashMap<>();
-    private final AtomicLong idCounter = new AtomicLong(-1);
+    private final Map<Long, Meal> storage = new ConcurrentHashMap<>();
+    private final AtomicLong idCounter = new AtomicLong(0);
 
     {
         List<Meal> meals = Arrays.asList(
@@ -28,7 +28,7 @@ public class InMemoryMealDao implements MealDao {
     @Override
     public Meal add(Meal meal) {
         if (meal.getId() == null) {
-            long mealId = idCounter.incrementAndGet();
+            long mealId = idCounter.getAndIncrement();
             meal.setId(mealId);
             storage.put(mealId, meal);
             return meal;
@@ -43,6 +43,7 @@ public class InMemoryMealDao implements MealDao {
 
     @Override
     public Meal update(Meal meal) {
+        if (!storage.containsKey(meal.getId())) return null;
         Meal tempMeal = new Meal(meal.getId(), meal.getDateTime(), meal.getDescription(), meal.getCalories());
         storage.replace(tempMeal.getId(), tempMeal);
         return tempMeal;
