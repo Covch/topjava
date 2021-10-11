@@ -57,17 +57,6 @@ public class MealServlet extends HttpServlet {
         req.getRequestDispatcher("/meals.jsp").forward(req, resp);
     }
 
-    private long getMealId(HttpServletRequest req) {
-        return Long.parseLong(req.getParameter("mealId"));
-    }
-
-    private void setAttrAndForward(HttpServletRequest req, HttpServletResponse resp, String action, Meal meal) throws ServletException, IOException {
-        req.setAttribute("action", action);
-        req.setAttribute("meal", meal);
-        log.debug("GET: {} {}", action, meal);
-        req.getRequestDispatcher(INSERT_OR_EDIT).forward(req, resp);
-    }
-
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         req.setCharacterEncoding("UTF-8");
@@ -83,5 +72,15 @@ public class MealServlet extends HttpServlet {
             mealDao.update(meal);
         }
         resp.sendRedirect(req.getContextPath() + LIST_MEAL);
+    }
+
+    private long getMealId(HttpServletRequest req) {
+        return Long.parseLong(req.getParameter("mealId"));
+    }
+
+    private void setAttrAndForward(HttpServletRequest req, HttpServletResponse resp, String action, Meal meal) throws ServletException, IOException {
+        req.setAttribute("meal", meal);
+        log.debug("GET: {} {}", action, meal);
+        req.getRequestDispatcher(INSERT_OR_EDIT).forward(req, resp);
     }
 }
