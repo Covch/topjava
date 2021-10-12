@@ -43,9 +43,8 @@ public class InMemoryMealDao implements MealDao {
 
     @Override
     public Meal update(Meal meal) {
-        if (!storage.containsKey(meal.getId())) return null;
         Meal tempMeal = new Meal(meal.getId(), meal.getDateTime(), meal.getDescription(), meal.getCalories());
-        storage.replace(tempMeal.getId(), tempMeal);
+        if (storage.replace(tempMeal.getId(), tempMeal) == null) return null;
         return tempMeal;
     }
 
