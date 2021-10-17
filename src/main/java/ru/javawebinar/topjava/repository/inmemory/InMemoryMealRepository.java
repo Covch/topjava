@@ -18,13 +18,12 @@ public class InMemoryMealRepository implements MealRepository {
     private final AtomicInteger counter = new AtomicInteger(0);
     private static final Logger log = getLogger(InMemoryMealRepository.class);
 
-    {
-        MealsUtil.meals.forEach(this::save);
-    }
+//    {
+//        MealsUtil.meals.forEach(this::save);
+//    }
 
     @Override
-    public Meal save(Meal meal) {
-        Integer userId = SecurityUtil.authUserId();
+    public Meal save(int userId, Meal meal) {
         log.info("save {}, userId {}", meal, userId);
         Meal tempMeal = new Meal(meal.getId(), userId, meal.getDateTime(), meal.getDescription(), meal.getCalories());
         if (tempMeal.isNew()) {
@@ -42,8 +41,7 @@ public class InMemoryMealRepository implements MealRepository {
     }
 
     @Override
-    public boolean delete(int id) {
-        Integer userId = SecurityUtil.authUserId();
+    public boolean delete(int userId, int id) {
         log.info("delete {}, userId {}", id, userId);
         return repository.computeIfPresent(id, (oldId, oldMeal) -> {
             if (oldMeal.getUserId().equals(userId)) {
@@ -54,16 +52,14 @@ public class InMemoryMealRepository implements MealRepository {
     }
 
     @Override
-    public Meal get(int id) {
-        Integer userId = SecurityUtil.authUserId();
+    public Meal get(int userId, int id) {
         log.info("get {}, userId {}", id, userId);
         Meal meal;
         return (meal = repository.get(id)).getUserId().equals(userId) ? meal : null;
     }
 
     @Override
-    public Collection<Meal> getAll() {
-        Integer userId = SecurityUtil.authUserId();
+    public Collection<Meal> getAll(int userId) {
         log.info("getAll, userId {}", userId);
         return repository.values().stream()
                 .filter(meal -> meal.getUserId().equals(userId))
