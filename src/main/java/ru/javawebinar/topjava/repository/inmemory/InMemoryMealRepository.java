@@ -1,10 +1,9 @@
 package ru.javawebinar.topjava.repository.inmemory;
 
 import org.slf4j.Logger;
+import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
-import ru.javawebinar.topjava.util.MealsUtil;
-import ru.javawebinar.topjava.web.SecurityUtil;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -13,14 +12,11 @@ import java.util.stream.Collectors;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
+@Repository
 public class InMemoryMealRepository implements MealRepository {
     private final Map<Integer, Meal> repository = new ConcurrentHashMap<>();
     private final AtomicInteger counter = new AtomicInteger(0);
     private static final Logger log = getLogger(InMemoryMealRepository.class);
-
-//    {
-//        MealsUtil.meals.forEach(this::save);
-//    }
 
     @Override
     public Meal save(int userId, Meal meal) {
@@ -63,7 +59,7 @@ public class InMemoryMealRepository implements MealRepository {
         log.info("getAll, userId {}", userId);
         return repository.values().stream()
                 .filter(meal -> meal.getUserId().equals(userId))
-                .sorted(Comparator.comparing(Meal::getDateTime))
+                .sorted(Comparator.comparing(Meal::getDateTime).reversed())
                 .collect(Collectors.toList());
     }
 }
