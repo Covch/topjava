@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -24,34 +25,24 @@ public class InMemoryMealRepository implements MealRepository {
         Meal tempMeal = new Meal(meal.getId(), userId, meal.getDateTime(), meal.getDescription(), meal.getCalories());
         if (tempMeal.isNew()) {
             tempMeal.setId(counter.incrementAndGet());
-            repository.put(tempMeal.getId(), meal);
+            repository.put(tempMeal.getId(), tempMeal);
             return tempMeal;
         }
         // handle case: update, but not present in storage
-        return Objects.equals(repository.computeIfPresent(tempMeal.getId(), (id, oldMeal) -> {
-            if (!oldMeal.getUserId().equals(tempMeal.getUserId())) {
-                return oldMeal;
-            }
-            return tempMeal;
-        }), tempMeal) ? tempMeal : null;
+        return repository.computeIfPresent(tempMeal.getId(), (id, oldMeal) -> tempMeal) == tempMeal ? tempMeal : null;
     }
 
     @Override
     public boolean delete(int userId, int id) {
         log.info("delete {}, userId {}", id, userId);
-        return repository.computeIfPresent(id, (oldId, oldMeal) -> {
-            if (oldMeal.getUserId().equals(userId)) {
-                return null;
-            }
-            return oldMeal;
-        }) != null;
+        return repository.containsKey(id) && repository.computeIfPresent(id, (mapId, oldMeal) -> oldMeal.getUserId().equals(userId) ? null : oldMeal) == null;
     }
 
     @Override
     public Meal get(int userId, int id) {
         log.info("get {}, userId {}", id, userId);
-        Meal meal;
-        return (meal = repository.get(id)).getUserId().equals(userId) ? meal : null;
+        Meal meal = repository.get(id);
+        return meal == null ? null : meal.getUserId().equals(userId) ? meal : null;
     }
 
     @Override
