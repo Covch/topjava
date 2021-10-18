@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.util.DateTimeUtil;
+import ru.javawebinar.topjava.util.MealsUtil;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -59,10 +60,8 @@ public class InMemoryMealRepository implements MealRepository {
     @Override
     public Collection<Meal> getAll(int userId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
         log.info("getAll, userId {}, from {} to {}", userId, startDateTime.toLocalDate(), endDateTime.toLocalDate());
-        return repository.values().stream()
-                .filter(meal -> meal.getUserId().equals(userId))
-                .filter(meal -> DateTimeUtil.isBetweenOpen(meal.getDate(), startDateTime.toLocalDate(), endDateTime.toLocalDate()))
-                .sorted(Comparator.comparing(Meal::getDateTime).reversed())
+        return getAll(userId).stream()
+                .filter(meal -> DateTimeUtil.isBetweenClosed(meal.getDate(), startDateTime.toLocalDate(), endDateTime.toLocalDate()))
                 .collect(Collectors.toList());
     }
 }
