@@ -57,11 +57,11 @@ public class InMemoryMealRepository implements MealRepository {
     }
 
     @Override
-    public Collection<Meal> getAll(int userId, LocalDate startDate, LocalDate endDate) {
-        log.info("getAll, userId {}, from {} to {}", userId, startDate, endDate);
+    public Collection<Meal> getAll(int userId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        log.info("getAll, userId {}, from {} to {}", userId, startDateTime.toLocalDate(), endDateTime.toLocalDate());
         return repository.values().stream()
                 .filter(meal -> meal.getUserId().equals(userId))
-                .filter(meal -> DateTimeUtil.isBetweenOpen(meal.getDate(), startDate, endDate))
+                .filter(meal -> DateTimeUtil.isBetweenOpen(meal.getDate(), startDateTime.toLocalDate(), endDateTime.toLocalDate()))
                 .sorted(Comparator.comparing(Meal::getDateTime).reversed())
                 .collect(Collectors.toList());
     }
