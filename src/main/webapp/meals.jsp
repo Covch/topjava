@@ -15,6 +15,16 @@
             color: red;
         }
     </style>
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelectorAll('input').forEach(function(e) {
+                if(e.value === '') e.value = window.sessionStorage.getItem(e.name);
+                e.addEventListener('input', function() {
+                    window.sessionStorage.setItem(e.name, e.value);
+                })
+            })
+        });
+    </script>
 </head>
 <body>
 <section>
@@ -27,20 +37,20 @@
     <form action="meals" method="GET">
         <input type="hidden" name="action" value="filter">
         From date (include):
-        <input type="date" value="${startDate}" name="startDate">
+        <input type="date" value="" name="startDate">
         <br>
         To date (include):
-        <input type="date" value="${endDate}" name="endDate">
+        <input type="date" value="" name="endDate">
         <br>
         From time (include):
-        <input type="time" value="${startTime}" name="startTime">
+        <input type="time" value="" name="startTime">
         <br>
         To time (not include):
-        <input type="time" value="${endTime}" name="endTime">
+        <input type="time" value="" name="endTime">
         <br>
         <input type="submit" value="Submit"/>
     </form>
-    <button onclick="window.location.href='meals'" type="button">Clear Filters</button>
+    <button onclick="window.location.href='meals';sessionStorage.clear()" type="button">Clear Filters</button>
     <table border="1" cellpadding="8" cellspacing="0">
         <thead>
         <tr>
