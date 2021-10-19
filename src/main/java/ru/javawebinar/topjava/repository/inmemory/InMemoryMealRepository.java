@@ -18,9 +18,9 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 @Repository
 public class InMemoryMealRepository implements MealRepository {
+    private static final Logger log = getLogger(InMemoryMealRepository.class);
     private final Map<Integer, Meal> repository = new ConcurrentHashMap<>();
     private final AtomicInteger counter = new AtomicInteger(0);
-    private static final Logger log = getLogger(InMemoryMealRepository.class);
 
     {
         MealsUtil.meals.forEach(meal -> this.save(1, new Meal(meal.getDateTime(), meal.getDescription() + " юзера", meal.getCalories())));

@@ -20,8 +20,8 @@ import java.util.Objects;
 
 public class MealServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(MealServlet.class);
-    private ConfigurableApplicationContext appCtx;
 
+    private ConfigurableApplicationContext appCtx;
     private MealRestController controller;
 
     @Override
