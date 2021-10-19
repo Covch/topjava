@@ -7,8 +7,9 @@ import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.util.MealsUtil;
 
-import java.time.LocalDateTime;
-import java.util.Collection;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
 
 import static org.slf4j.LoggerFactory.getLogger;
 import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
@@ -26,17 +27,19 @@ public class MealRestController {
         this.service = service;
     }
 
-    public Collection<MealTo> getAll() {
+    public List<MealTo> getAll() {
         log.info("getAll by userId={}", authUserId());
         return MealsUtil.getTos(service.getAll(authUserId()), authUserCaloriesPerDay());
     }
 
-    public Collection<MealTo> getAll(LocalDateTime startDateTime, LocalDateTime endDateTime) {
-        log.info("getAll by userId={} from {} to {}", authUserId(), startDateTime, endDateTime);
-        return MealsUtil.getFilteredTos(service.getAll(authUserId(), startDateTime, endDateTime)
-                , authUserCaloriesPerDay()
-                , startDateTime.toLocalTime()
-                , endDateTime.toLocalTime());
+    public List<MealTo> getAll(LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
+        log.info("getAll by userId={} from {} {} to {} {}", authUserId(), startDate, startTime, endDate, endTime);
+        startDate = startDate == null ? LocalDate.MIN : startDate;
+        endDate = endDate == null ? LocalDate.MAX : endDate;
+        startTime = startTime == null ? LocalTime.MIN : startTime;
+        endTime = endTime == null ? LocalTime.MAX : endTime;
+        return MealsUtil.getFilteredTos(service.getAll(authUserId(), startDate, endDate), authUserCaloriesPerDay()
+                , startTime, endTime);
     }
 
     public Meal get(int id) {

@@ -61,22 +61,12 @@ public class MealServlet extends HttpServlet {
 
         switch (action == null ? "all" : action) {
             case "filter":
-                LocalDate startDate = request.getParameter("startDate").isEmpty()
-                        ? LocalDate.MIN
-                        : LocalDate.parse(request.getParameter("startDate"));
-                LocalDate endDate = request.getParameter("endDate").isEmpty()
-                        ? LocalDate.MAX
-                        : LocalDate.parse(request.getParameter("endDate"));
-                LocalTime startTime = request.getParameter("startTime").isEmpty()
-                        ? LocalTime.MIN
-                        : LocalTime.parse(request.getParameter("startTime"));
-                LocalTime endTime = request.getParameter("endTime").isEmpty()
-                        ? LocalTime.MAX
-                        : LocalTime.parse(request.getParameter("endTime"));
-                LocalDateTime startDateTime = LocalDateTime.of(startDate, startTime);
-                LocalDateTime endDateTime = LocalDateTime.of(endDate, endTime);
-                log.info("getAll from {} to {}", startDateTime, endDateTime);
-                request.setAttribute("meals", controller.getAll(startDateTime, endDateTime));
+                log.info("Filter with query: {}", request.getQueryString());
+                request.setAttribute("meals",
+                        controller.getAll(getDate(request,"startDate")
+                                        , getDate(request, "endDate")
+                                        , getTime(request, "startTime")
+                                        , getTime(request, "endTime")));
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
             case "delete":
@@ -100,6 +90,16 @@ public class MealServlet extends HttpServlet {
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
         }
+    }
+
+    private LocalDate getDate(HttpServletRequest request, String name) {
+        String dateString = request.getParameter(name);
+        return dateString == null || dateString.isEmpty() ? null : LocalDate.parse(dateString);
+    }
+
+    private LocalTime getTime(HttpServletRequest request, String name) {
+        String timeString = request.getParameter(name);
+        return timeString == null || timeString.isEmpty() ? null : LocalTime.parse(timeString);
     }
 
     private int getId(HttpServletRequest request) {
