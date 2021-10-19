@@ -32,13 +32,13 @@ public class MealRestController {
         return MealsUtil.getTos(service.getAll(authUserId()), authUserCaloriesPerDay());
     }
 
-    public List<MealTo> getAll(LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
+    public List<MealTo> getAllInInterval(LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
         log.info("getAll by userId={} from {} {} to {} {}", authUserId(), startDate, startTime, endDate, endTime);
         startDate = startDate == null ? LocalDate.MIN : startDate;
         endDate = endDate == null ? LocalDate.MAX : endDate;
         startTime = startTime == null ? LocalTime.MIN : startTime;
         endTime = endTime == null ? LocalTime.MAX : endTime;
-        return MealsUtil.getFilteredTos(service.getAll(authUserId(), startDate, endDate), authUserCaloriesPerDay()
+        return MealsUtil.getFilteredTos(service.getAllInInterval(authUserId(), startDate, endDate), authUserCaloriesPerDay()
                 , startTime, endTime);
     }
 

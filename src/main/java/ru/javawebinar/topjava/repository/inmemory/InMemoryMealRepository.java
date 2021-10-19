@@ -72,7 +72,7 @@ public class InMemoryMealRepository implements MealRepository {
     }
 
     @Override
-    public List<Meal> getAll(int userId, LocalDate startDate, LocalDate endDate) {
+    public List<Meal> getAllInInterval(int userId, LocalDate startDate, LocalDate endDate) {
         log.info("getAll, userId {}, from {} to {}", userId, startDate, endDate);
         return filterByPredicate(repository.getOrDefault(userId, new ConcurrentHashMap<>()).values()
                 , meal -> DateTimeUtil.isBetweenClosed(meal.getDate(), startDate, endDate));
