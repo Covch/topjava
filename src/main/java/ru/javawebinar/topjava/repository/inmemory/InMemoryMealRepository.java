@@ -22,6 +22,11 @@ public class InMemoryMealRepository implements MealRepository {
     private final AtomicInteger counter = new AtomicInteger(0);
     private static final Logger log = getLogger(InMemoryMealRepository.class);
 
+    {
+        MealsUtil.meals.forEach(meal -> this.save(1, new Meal(meal.getDateTime(), meal.getDescription() + " юзера", meal.getCalories())));
+        MealsUtil.meals.forEach(meal -> this.save(2, new Meal(meal.getDateTime(), meal.getDescription() + " админа", meal.getCalories())));
+    }
+
     @Override
     public Meal save(int userId, Meal meal) {
         log.info("save {}, userId {}", meal, userId);
