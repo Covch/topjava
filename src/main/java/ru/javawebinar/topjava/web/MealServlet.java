@@ -61,10 +61,18 @@ public class MealServlet extends HttpServlet {
 
         switch (action == null ? "all" : action) {
             case "filter":
-                LocalDate startDate = request.getParameter("startDate").isEmpty() ? LocalDate.MIN : LocalDate.parse(request.getParameter("startDate"));
-                LocalDate endDate = request.getParameter("endDate").isEmpty() ? LocalDate.MAX : LocalDate.parse(request.getParameter("endDate"));
-                LocalTime startTime = request.getParameter("startTime").isEmpty() ? LocalTime.MIN : LocalTime.parse(request.getParameter("startTime"));
-                LocalTime endTime = request.getParameter("endTime").isEmpty() ? LocalTime.MAX : LocalTime.parse(request.getParameter("endTime"));
+                LocalDate startDate = request.getParameter("startDate").isEmpty()
+                        ? LocalDate.MIN
+                        : LocalDate.parse(request.getParameter("startDate"));
+                LocalDate endDate = request.getParameter("endDate").isEmpty()
+                        ? LocalDate.MAX
+                        : LocalDate.parse(request.getParameter("endDate"));
+                LocalTime startTime = request.getParameter("startTime").isEmpty()
+                        ? LocalTime.MIN
+                        : LocalTime.parse(request.getParameter("startTime"));
+                LocalTime endTime = request.getParameter("endTime").isEmpty()
+                        ? LocalTime.MAX
+                        : LocalTime.parse(request.getParameter("endTime"));
                 LocalDateTime startDateTime = LocalDateTime.of(startDate, startTime);
                 LocalDateTime endDateTime = LocalDateTime.of(endDate, endTime);
                 log.info("getAll from {} to {}", startDateTime, endDateTime);

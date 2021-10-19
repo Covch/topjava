@@ -24,8 +24,10 @@ public class InMemoryMealRepository implements MealRepository {
     private final AtomicInteger counter = new AtomicInteger(0);
 
     {
-        MealsUtil.meals.forEach(meal -> this.save(1, new Meal(meal.getDateTime(), meal.getDescription() + " юзера", meal.getCalories())));
-        MealsUtil.meals.forEach(meal -> this.save(2, new Meal(meal.getDateTime(), meal.getDescription() + " админа", meal.getCalories())));
+        MealsUtil.meals.forEach(meal -> this.save(1,
+                new Meal(meal.getDateTime(), meal.getDescription() + " юзера", meal.getCalories())));
+        MealsUtil.meals.forEach(meal -> this.save(2,
+                new Meal(meal.getDateTime(), meal.getDescription() + " админа", meal.getCalories())));
     }
 
     @Override
@@ -38,13 +40,15 @@ public class InMemoryMealRepository implements MealRepository {
             return tempMeal;
         }
         // handle case: update, but not present in storage
-        return repository.computeIfPresent(tempMeal.getId(), (id, oldMeal) -> oldMeal.getUserId().equals(userId) ? tempMeal : oldMeal) == tempMeal ? tempMeal : null;
+        return repository.computeIfPresent(tempMeal.getId(),
+                (id, oldMeal) -> oldMeal.getUserId().equals(userId) ? tempMeal : oldMeal) == tempMeal ? tempMeal : null;
     }
 
     @Override
     public boolean delete(int userId, int id) {
         log.info("delete {}, userId {}", id, userId);
-        return repository.containsKey(id) && repository.computeIfPresent(id, (mapId, oldMeal) -> oldMeal.getUserId().equals(userId) ? null : oldMeal) == null;
+        return repository.containsKey(id) && repository.computeIfPresent(id,
+                (mapId, oldMeal) -> oldMeal.getUserId().equals(userId) ? null : oldMeal) == null;
     }
 
     @Override
