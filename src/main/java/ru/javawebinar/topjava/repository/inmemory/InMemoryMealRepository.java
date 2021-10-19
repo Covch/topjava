@@ -44,14 +44,15 @@ public class InMemoryMealRepository implements MealRepository {
             return tempMeal;
         }
         // handle case: update, but not present in storage
-        return repository.get(userId).computeIfPresent(tempMeal.getId(), (id, oldMeal) -> tempMeal);
+        return repository.getOrDefault(userId, new ConcurrentHashMap<>())
+                .computeIfPresent(tempMeal.getId(), (id, oldMeal) -> tempMeal);
     }
 
     @Override
     public boolean delete(int userId, int id) {
         log.info("delete {}, userId {}", id, userId);
         AtomicReference<Boolean> result = new AtomicReference<>(false);
-        repository.get(userId).computeIfPresent(id, (mapId, oldMeal) -> {
+        repository.getOrDefault(userId, new ConcurrentHashMap<>()).computeIfPresent(id, (mapId, oldMeal) -> {
             result.set(true);
             return null;
         });
@@ -61,19 +62,20 @@ public class InMemoryMealRepository implements MealRepository {
     @Override
     public Meal get(int userId, int id) {
         log.info("get {}, userId {}", id, userId);
-        return repository.get(userId).get(id);
+        return repository.getOrDefault(userId, new ConcurrentHashMap<>()).get(id);
     }
 
     @Override
     public List<Meal> getAll(int userId) {
         log.info("getAll, userId {}", userId);
-        return filterByPredicate(repository.get(userId).values(), meal -> true);
+        return filterByPredicate(repository.getOrDefault(userId, new ConcurrentHashMap<>()).values(), meal -> true);
     }
 
     @Override
     public List<Meal> getAll(int userId, LocalDate startDate, LocalDate endDate) {
         log.info("getAll, userId {}, from {} to {}", userId, startDate, endDate);
-        return filterByPredicate(repository.get(userId).values(), meal -> DateTimeUtil.isBetweenClosed(meal.getDate(), startDate, endDate));
+        return filterByPredicate(repository.getOrDefault(userId, new ConcurrentHashMap<>()).values()
+                , meal -> DateTimeUtil.isBetweenClosed(meal.getDate(), startDate, endDate));
     }
 
     private List<Meal> filterByPredicate(Collection<Meal> meals, Predicate<Meal> filter) {
