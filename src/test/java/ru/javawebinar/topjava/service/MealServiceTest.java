@@ -10,19 +10,23 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
+import ru.javawebinar.topjava.MealTestData;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertThrows;
+import static ru.javawebinar.topjava.MealTestData.assertMatch;
 import static ru.javawebinar.topjava.MealTestData.*;
+import static ru.javawebinar.topjava.UserTestData.*;
 
 @ContextConfiguration({
         "classpath:spring/spring-app.xml",
-        "classpath:spring/spring-db.xml"
+        "classpath:spring/spring-db.xml",
+        "classpath:spring/spring-jdbc-repository.xml"
 })
 @RunWith(SpringRunner.class)
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
@@ -41,11 +45,6 @@ public class MealServiceTest {
     public void get() {
         Meal meal = service.get(USER_MEAL_ID, USER_ID);
         assertMatch(meal, userMeal);
-    }
-
-    @Test
-    public void getOtherUser() {
-        assertThrows(NotFoundException.class, () -> service.get(USER_MEAL_ID, ADMIN_ID));
     }
 
     @Test
@@ -70,8 +69,8 @@ public class MealServiceTest {
 
     @Test
     public void delete() {
-        service.delete(ADMIN_MEAL_ID, ADMIN_ID);
-        assertThrows(NotFoundException.class, () -> service.get(ADMIN_MEAL_ID, ADMIN_ID));
+        service.delete(ADMIN_DELETE_MEAL_ID, ADMIN_ID);
+        assertThrows(NotFoundException.class, () -> service.get(ADMIN_DELETE_MEAL_ID, ADMIN_ID));
     }
 
     @Test
@@ -96,66 +95,91 @@ public class MealServiceTest {
 
     @Test
     public void getBetweenInclusive() {
-        List<Meal> before2021 = service.getBetweenInclusive(null, LocalDate.of(2021, 1, 1), USER_ID);
-        assertMatch(before2021, userMeal);
+        LocalDate before = LocalDate.of(2021, 12, 15);
+        LocalDate after = LocalDate.of(2020, 12, 22);
+        List<Meal> beforeAndAfter = service.getBetweenInclusive(after, before, USER_ID);
+        assertMatch(beforeAndAfter, userMealList.stream().filter(meal -> meal.getDate().compareTo(before) <= 0 &&
+                meal.getDate().compareTo(after) >= 0).collect(Collectors.toList()));
+    }
+
+    @Test
+    public void getBetweenInclusiveBefore() {
+        LocalDate before = LocalDate.of(2021, 12, 14);
+        List<Meal> allBefore = service.getBetweenInclusive(null, before, USER_ID);
+        assertMatch(allBefore, userMealList.stream().filter(meal -> meal.getDate().compareTo(before) <= 0)
+                .collect(Collectors.toList()));
+    }
+
+    @Test
+    public void getBetweenInclusiveAfter() {
+        LocalDate after = LocalDate.of(2021, 12, 15);
+        List<Meal> allAfter = service.getBetweenInclusive(after, null, USER_ID);
+        assertMatch(allAfter, userMealList.stream().filter(meal -> meal.getDate().compareTo(after) >= 0)
+                .collect(Collectors.toList()));
+    }
+
+    @Test
+    public void getBetweenInclusiveAll() {
+        List<Meal> allAfter = service.getBetweenInclusive(null, null, USER_ID);
+        assertMatch(allAfter, userMealList);
     }
 
     @Test
     public void getAll() {
         List<Meal> all = service.getAll(USER_ID);
-        assertMatch(all, secondUserMeal, userMeal);
+        assertMatch(all, userMealList);
     }
 
     @Test
     public void update() {
-        Meal updated = getUpdated();
-        service.update(updated, USER_ID);
-        assertMatch(service.get(USER_MEAL_ID, USER_ID), getUpdated());
+        Meal updated = getUpdatedMeal();
+        service.update(updated, ADMIN_ID);
+        assertMatch(service.get(ADMIN_UPDATE_MEAL_ID, ADMIN_ID), getUpdatedMeal());
     }
 
     @Test
     public void updateNotFoundMeal() {
-        Meal notFoundMeal = getUpdated();
+        Meal notFoundMeal = getUpdatedMeal();
         notFoundMeal.setId(NOT_FOUND);
         assertThrows(NotFoundException.class, () -> service.update(notFoundMeal, USER_MEAL_ID));
     }
 
     @Test
     public void updateNotFoundUser() {
-        Meal updated = getUpdated();
+        Meal updated = getUpdatedMeal();
         assertThrows(NotFoundException.class, () -> service.update(updated, NOT_FOUND));
     }
 
     @Test
     public void updateNotFound() {
-        Meal notFoundMeal = getUpdated();
+        Meal notFoundMeal = getUpdatedMeal();
         notFoundMeal.setId(NOT_FOUND);
         assertThrows(NotFoundException.class, () -> service.update(notFoundMeal, NOT_FOUND));
     }
 
     @Test
     public void updateForeign() {
-        assertThrows(NotFoundException.class, () -> service.update(getUpdated(), ADMIN_ID));
+        assertThrows(NotFoundException.class, () -> service.update(getUpdatedMeal(), USER_ID));
     }
 
     @Test
     public void create() {
-        Meal created = service.create(getNew(), USER_ID);
+        Meal created = service.create(MealTestData.getNewMeal(), ADMIN_ID);
         Integer newId = created.getId();
-        Meal newMeal = getNew();
+        Meal newMeal = getNewMeal();
         newMeal.setId(newId);
         assertMatch(created, newMeal);
-        assertMatch(service.get(newId, USER_ID), newMeal);
+        assertMatch(service.get(newId, ADMIN_ID), newMeal);
     }
 
     @Test
     public void createNotFound() {
-        assertThrows(DataIntegrityViolationException.class, () -> service.create(getNew(), NOT_FOUND));
+        assertThrows(DataIntegrityViolationException.class, () -> service.create(getNewMeal(), NOT_FOUND));
     }
 
     @Test
     public void createDuplicateDateTime() {
-        assertThrows(DuplicateKeyException.class, () -> service.create(new Meal(null, LocalDateTime.parse("2020-12-19T10:07:04"),
-                "Some Meal with not unique DateTime", 416), USER_ID));
+        assertThrows(DuplicateKeyException.class, () -> service.create(new Meal(null, userMeal.getDateTime(),
+                "duplicate datetime meal", 123), USER_ID));
     }
 }

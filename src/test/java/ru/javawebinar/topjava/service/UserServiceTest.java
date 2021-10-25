@@ -21,7 +21,8 @@ import static ru.javawebinar.topjava.UserTestData.*;
 
 @ContextConfiguration({
         "classpath:spring/spring-app.xml",
-        "classpath:spring/spring-db.xml"
+        "classpath:spring/spring-db.xml",
+        "classpath:spring/spring-jdbc-repository.xml"
 })
 @RunWith(SpringRunner.class)
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
@@ -38,9 +39,9 @@ public class UserServiceTest {
 
     @Test
     public void create() {
-        User created = service.create(getNew());
+        User created = service.create(getNewUser());
         Integer newId = created.getId();
-        User newUser = getNew();
+        User newUser = getNewUser();
         newUser.setId(newId);
         assertMatch(created, newUser);
         assertMatch(service.get(newId), newUser);
@@ -82,9 +83,9 @@ public class UserServiceTest {
 
     @Test
     public void update() {
-        User updated = getUpdated();
+        User updated = getUpdatedUser();
         service.update(updated);
-        assertMatch(service.get(USER_ID), getUpdated());
+        assertMatch(service.get(USER_ID), getUpdatedUser());
     }
 
     @Test
