@@ -67,5 +67,4 @@ public class MealTestData {
         log.debug("expected: {}", expected);
         assertThat(actual).usingRecursiveFieldByFieldElementComparator().isEqualTo(expected);
     }
-
 }
