@@ -15,6 +15,7 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertThrows;
@@ -122,7 +123,8 @@ public class MealServiceTest {
 
     @Test
     public void getBetweenInclusiveNotFound() {
-        assertThrows(NotFoundException.class, () -> service.getBetweenInclusive(null, null, NOT_FOUND_USER));
+        List<Meal> emptyList = service.getBetweenInclusive(null, null, NOT_FOUND_USER);
+        assertMatch(emptyList, Collections.emptyList());
     }
 
     @Test
@@ -133,7 +135,8 @@ public class MealServiceTest {
 
     @Test
     public void getAllNotFound() {
-        assertThrows(NotFoundException.class, () -> service.getAll(NOT_FOUND_USER));
+        List<Meal> emptyList = service.getAll(NOT_FOUND_USER);
+        assertMatch(emptyList, Collections.emptyList());
     }
 
     @Test

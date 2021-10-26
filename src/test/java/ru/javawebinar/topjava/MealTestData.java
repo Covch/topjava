@@ -34,13 +34,9 @@ public class MealTestData {
             "Admin`s meal 2 for updating", 100);
     public static final Meal adminMealUpdDuplicateDateTime = new Meal(START_SEQ + 9, LocalDateTime.of(2000, 1, 1, 1, 1),
             "Admin`s meal 1 for DateTimeDuplicate updating", 100);
-
     public static final List<Meal> userMealListAll = Arrays.asList(userMeal2, userMeal3, userMeal4, userMeal5, userMeal);
-
-    public static final List<Meal> userMealListStop = Arrays.asList(userMeal5, userMeal);
-
     public static final List<Meal> userMealListStart = Arrays.asList(userMeal2, userMeal3, userMeal4);
-
+    public static final List<Meal> userMealListStop = Arrays.asList(userMeal5, userMeal);
     public static final List<Meal> userMealListStartAndStop = Arrays.asList(userMeal3, userMeal4, userMeal5);
 
     public static Meal getNewMeal() {
