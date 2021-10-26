@@ -16,7 +16,6 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.MealTestData.assertMatch;
@@ -95,39 +94,36 @@ public class MealServiceTest {
 
     @Test
     public void getBetweenInclusive() {
-        LocalDate before = LocalDate.of(2021, 12, 15);
-        LocalDate after = LocalDate.of(2020, 12, 22);
-        List<Meal> beforeAndAfter = service.getBetweenInclusive(after, before, USER_ID);
-        assertMatch(beforeAndAfter, userMealList.stream().filter(meal -> meal.getDate().compareTo(before) <= 0 &&
-                meal.getDate().compareTo(after) >= 0).collect(Collectors.toList()));
+        LocalDate startDate = LocalDate.of(2020, 12, 22);
+        LocalDate stopDate = LocalDate.of(2021, 12, 15);
+        List<Meal> actualMeals = service.getBetweenInclusive(startDate, stopDate, USER_ID);
+        assertMatch(actualMeals, userMealListStartAndStop);
     }
 
     @Test
-    public void getBetweenInclusiveBefore() {
-        LocalDate before = LocalDate.of(2021, 12, 14);
-        List<Meal> allBefore = service.getBetweenInclusive(null, before, USER_ID);
-        assertMatch(allBefore, userMealList.stream().filter(meal -> meal.getDate().compareTo(before) <= 0)
-                .collect(Collectors.toList()));
+    public void getBetweenInclusiveStop() {
+        LocalDate stopDate = LocalDate.of(2021, 12, 14);
+        List<Meal> actualMeals = service.getBetweenInclusive(null, stopDate, USER_ID);
+        assertMatch(actualMeals, userMealListStop);
     }
 
     @Test
-    public void getBetweenInclusiveAfter() {
-        LocalDate after = LocalDate.of(2021, 12, 15);
-        List<Meal> allAfter = service.getBetweenInclusive(after, null, USER_ID);
-        assertMatch(allAfter, userMealList.stream().filter(meal -> meal.getDate().compareTo(after) >= 0)
-                .collect(Collectors.toList()));
+    public void getBetweenInclusiveStart() {
+        LocalDate startDate = LocalDate.of(2021, 12, 15);
+        List<Meal> actualMeals = service.getBetweenInclusive(startDate, null, USER_ID);
+        assertMatch(actualMeals, userMealListStart);
     }
 
     @Test
     public void getBetweenInclusiveAll() {
-        List<Meal> allAfter = service.getBetweenInclusive(null, null, USER_ID);
-        assertMatch(allAfter, userMealList);
+        List<Meal> actualMeals = service.getBetweenInclusive(null, null, USER_ID);
+        assertMatch(actualMeals, userMealListAll);
     }
 
     @Test
     public void getAll() {
         List<Meal> all = service.getAll(USER_ID);
-        assertMatch(all, userMealList);
+        assertMatch(all, userMealListAll);
     }
 
     @Test
