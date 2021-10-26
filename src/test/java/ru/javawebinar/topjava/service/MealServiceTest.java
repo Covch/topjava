@@ -159,6 +159,13 @@ public class MealServiceTest {
     }
 
     @Test
+    public void updateDuplicateDatetime() {
+        Meal updated = getUpdatedMeal();
+        updated.setDateTime(adminMealUpdDuplicateDateTime.getDateTime());
+        assertThrows(DuplicateKeyException.class, () -> service.update(updated, ADMIN_ID));
+    }
+
+    @Test
     public void create() {
         Meal created = service.create(MealTestData.getNewMeal(), ADMIN_ID);
         Integer newId = created.getId();

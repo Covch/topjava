@@ -21,4 +21,5 @@ VALUES (100000, '2020-12-21 10:00', 'User`s meal 1', 100),
        (100000, '2021-12-15 00:00', 'User`s meal 4', 1000),
        (100000, '2021-12-14 23:59', 'User`s meal 5', 500),
        (100001, '2020-11-12 05:31', 'Admin`s meal 1 for deleting', 100),
-       (100001, '1000-01-01 01:01', 'Admin`s meal 1 for updating', 100);
+       (100001, '1000-01-01 01:01', 'Admin`s meal 1 for updating', 100),
+       (100001, '2000-01-01 01:01', 'Admin`s meal 1 for DateTimeDuplicate updating', 100);
