@@ -16,7 +16,8 @@ import java.time.LocalTime;
                 "AND m.dateTime < ?3" +
                 "ORDER BY m.dateTime DESC"),
         @NamedQuery(name = Meal.ALL_SORTED, query = "SELECT m FROM Meal m WHERE m.user.id=?1" +
-                "ORDER BY m.dateTime DESC")
+                "ORDER BY m.dateTime DESC"),
+        @NamedQuery(name = Meal.DELETE, query = "DELETE FROM Meal m WHERE m.id=?1 AND m.user.id=?2")
 })
 
 @Entity
@@ -25,6 +26,7 @@ public class Meal extends AbstractBaseEntity {
 
     public static final String BETWEEN_HALF_OPEN = "Meal.getBetweenHalfOpen";
     public static final String ALL_SORTED = "Meal.getAllSorted";
+    public static final String DELETE = "Meal.delete";
 
     @Column(name = "date_time", nullable = false)
     @NotNull

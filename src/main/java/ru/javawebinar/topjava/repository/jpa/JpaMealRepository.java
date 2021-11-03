@@ -28,9 +28,7 @@ public class JpaMealRepository implements MealRepository {
             em.persist(meal);
             return meal;
         } else {
-            Meal refToMeal = em.getReference(Meal.class, meal.getId());
-            if (refToMeal != null && refToUser != null &&
-                    Objects.equals(refToUser.getId(), refToMeal.getUser().getId())) {
+            if (get(meal.getId(), userId) != null) {
                 return em.merge(meal);
             }
         }
@@ -40,22 +38,17 @@ public class JpaMealRepository implements MealRepository {
     @Override
     @Transactional
     public boolean delete(int id, int userId) {
-        User refToUser = em.getReference(User.class, userId);
-        Meal meal = em.find(Meal.class, id);
-        if (meal != null && refToUser != null &&
-                Objects.equals(refToUser.getId(), meal.getUser().getId())) {
-            em.remove(meal);
-            return true;
-        }
-        return false;
+        return em.createNamedQuery(Meal.DELETE)
+                .setParameter(1, id)
+                .setParameter(2, userId)
+                .executeUpdate() != 0;
     }
 
     @Override
     public Meal get(int id, int userId) {
-        User refToUser = em.getReference(User.class, userId);
         Meal meal = em.find(Meal.class, id);
-        if (meal != null && refToUser != null
-                && Objects.equals(refToUser.getId(), meal.getUser().getId())) {
+        if (meal != null
+                && Objects.equals(userId, meal.getUser().getId())) {
             return meal;
         }
         return null;
