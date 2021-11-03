@@ -11,7 +11,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
-import ru.javawebinar.topjava.TestUtils;
+import ru.javawebinar.topjava.JUnitStopWatch;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
@@ -34,11 +34,11 @@ public class MealServiceTest {
     private static final Logger log = getLogger(MealServiceTest.class);
 
     @Rule
-    public TestUtils.JUnitStopWatch stopWatch = new TestUtils.JUnitStopWatch();
+    public JUnitStopWatch stopWatch = new JUnitStopWatch();
 
     @AfterClass
     public static void logAllTimeInfo() {
-        log.debug(TestUtils.JUnitStopWatch.getAllTestInfo());
+        log.debug(JUnitStopWatch.getAllTestInfo());
     }
 
     @Autowired
