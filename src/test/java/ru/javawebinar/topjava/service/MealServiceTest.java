@@ -36,13 +36,13 @@ public class MealServiceTest {
     @Rule
     public JUnitStopWatch stopWatch = new JUnitStopWatch();
 
-    @AfterClass
-    public static void logAllTimeInfo() {
-        log.debug(JUnitStopWatch.getAllTestInfo());
-    }
-
     @Autowired
     private MealService service;
+
+    @AfterClass
+    public static void logAllTimeInfo() {
+        JUnitStopWatch.logAllTimeInfo();
+    }
 
     @Test
     public void delete() {
