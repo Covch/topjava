@@ -14,7 +14,7 @@ public class Profiles {
             POSTGRES_DB = "postgres",
             HSQL_DB = "hsqldb";
 
-    //  Get DB profile depending of DB driver in classpath
+    //  Get DB profile depending on DB driver in classpath
     public static String getActiveDbProfile() {
         if (ClassUtils.isPresent("org.postgresql.Driver", null)) {
             return POSTGRES_DB;
@@ -22,6 +22,18 @@ public class Profiles {
             return HSQL_DB;
         } else {
             throw new IllegalStateException("Could not find DB driver");
+        }
+    }
+
+    public static String getActiveRepoProfile(Class<?> aClass) {
+        if (aClass.getSimpleName().endsWith("JdbcTest")) {
+            return JDBC;
+        } else if (aClass.getSimpleName().endsWith("JpaTest")) {
+            return JPA;
+        } else if (aClass.getSimpleName().endsWith("DataJpaTest")) {
+            return DATAJPA;
+        } else {
+            throw new IllegalStateException("Could not find repo implementation");
         }
     }
 }
